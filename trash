@@ -1,0 +1,33 @@
+string Staffsql = "CREATE TABLE IF NOT EXISTS `staff` (`id` int(11) NOT NULL AUTO_INCREMENT, `username` varchar(255) NOT NULL, `password` varchar(255) NOT NULL, `role` varchar(255) NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;";
+
+string Customersql = "CREATE TABLE IF NOT EXISTS `customers` (`id` int(11) NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, `address` varchar(255) NOT NULL, `phone` varchar(255) NOT NULL, `email` varchar(255) NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;";
+
+string Jobssql = "CREATE TABLE IF NOT EXISTS `jobs` (`id` int(11) NOT NULL AUTO_INCREMENT, `customer_id` int(11) NOT NULL, `staff_id` int(11) NOT NULL, `jobdescription` varchar(255), `jobstatus` varchar(255) NOT NULL, `jobcost` varchar(255) NOT NULL, signoff BOOL NOT NULL, jobnotes varchar(255), `jobdate` varchar(255) NOT NULL, FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`), FOREIGN KEY (`staff_id`) REFERENCES `staff`(`id`), PRIMARY KEY (`id`)) ENGINE=InnoDB;";
+
+string Taskssql = "CREATE TABLE IF NOT EXISTS `tasks` (`id` int(11) NOT NULL AUTO_INCREMENT, `job_id` int(11) NOT NULL, `taskdescription` varchar(255) NOT NULL, `taskstatus` varchar(255) NOT NULL, tasknotes varchar(255), `taskdate` varchar(255) NOT NULL, FOREIGN KEY (`job_id`) REFERENCES `jobs`(`id`), PRIMARY KEY (`id`)) ENGINE=InnoDB;";
+
+string StaffInsert = "INSERT INTO `staff` (`id`, `username`, `password`, `role`) VALUES (NULL, 'admin', 'admin', 'sysadmin');";
+
+string CustomerInsert = "INSERT INTO `customers` (`id`, `name`, `address`, `phone`, `email`) VALUES (NULL, 'John Smith', '123 Fake Street', '0123456789', 'john@email.com');";
+
+string JobsInsert = "INSERT INTO `jobs` (`id`, `customer_id`, `staff_id`, `jobdescription`, `jobstatus`, `jobcost`, `signoff`, `jobnotes`, `jobdate`) VALUES (NULL, '1', '1', 'Replace Engine', 'In Progress', '1000', '0', 'Engine is broken', '2018-01-01');";
+
+string TasksInsert = "INSERT INTO `tasks` (`id`, `job_id`, `taskdescription`, `taskstatus`, `tasknotes`, `taskdate`) VALUES (NULL, '1', 'Replace Engine', 'In Progress', 'Engine is broken', '2018-01-01');";
+
+
+// loop through each query
+string[] queries = { Staffsql, Customersql, Jobssql, Taskssql, StaffInsert, CustomerInsert, JobsInsert, TasksInsert };
+
+foreach (string query in queries)
+{
+    // create a command and assign the query and connection from the constructor
+    MySqlCommand cmd = new MySqlCommand(query, dbCon.Connection);
+
+    // execute the command
+    cmd.ExecuteNonQuery();
+}
+
+
+// close the connection
+
+dbCon.Close();

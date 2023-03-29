@@ -1,0 +1,15 @@
+D:\dev\musgui\obj\Debug\net7.0\musgui.csproj.AssemblyReference.cache
+D:\dev\musgui\obj\Debug\net7.0\musgui.GeneratedMSBuildEditorConfig.editorconfig
+D:\dev\musgui\obj\Debug\net7.0\musgui.AssemblyInfoInputs.cache
+D:\dev\musgui\obj\Debug\net7.0\musgui.AssemblyInfo.cs
+D:\dev\musgui\obj\Debug\net7.0\musgui.csproj.CoreCompileInputs.cache
+D:\dev\musgui\bin\Debug\net7.0\musgui.exe
+D:\dev\musgui\bin\Debug\net7.0\musgui.deps.json
+D:\dev\musgui\bin\Debug\net7.0\musgui.runtimeconfig.json
+D:\dev\musgui\bin\Debug\net7.0\musgui.dll
+D:\dev\musgui\bin\Debug\net7.0\musgui.pdb
+D:\dev\musgui\obj\Debug\net7.0\musgui.dll
+D:\dev\musgui\obj\Debug\net7.0\refint\musgui.dll
+D:\dev\musgui\obj\Debug\net7.0\musgui.pdb
+D:\dev\musgui\obj\Debug\net7.0\musgui.genruntimeconfig.cache
+D:\dev\musgui\obj\Debug\net7.0\ref\musgui.dll
