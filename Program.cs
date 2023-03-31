@@ -877,10 +877,129 @@ namespace Program
 
             }
 
+            // Show all completed tasks
+
+            Label completedTasksLabel = new Label();
+            completedTasksLabel.Text = "Completed Tasks";
+            completedTasksLabel.Location = new Point(10, 480);
+            completedTasksLabel.Size = new Size(100, 20);
+            form.Controls.Add(completedTasksLabel);
+
+            if (DbCon.IsConnect())
+            {
+                // maximum of 10 tasks shown at a time and taskstatus has the value "not started"
+                string query = "SELECT * FROM tasks WHERE taskstatus = 'completed' LIMIT 10";
+                MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                int i = 0;
+                while (reader.Read())
+                {
+                    string id = reader.GetString("id");
+
+                    // show task description 
+                    Label taskDescription = new Label();
+                    taskDescription.Text = reader.GetString("taskdescription");
+                    taskDescription.Location = new Point(10, 500 + (i * 30));
+                    taskDescription.Size = new Size(100, 20);
+                    form.Controls.Add(taskDescription);
+
+                    Button updateTask = new Button();
+                    updateTask.Text = "Update Task";
+                    updateTask.Location = new Point(110, 500 + (i * 30));
+                    updateTask.Size = new Size(100, 20);
+                    form.Controls.Add(updateTask);
+
+                    updateTask.Click += (sender, e) =>
+                    {
+                        form.Controls.Clear();
+                        reader.Close();
+                        UpdateTask(form, username, id, "headmechanic");
+                    };
+
+                    Button deleteTask = new Button();
+                    deleteTask.Text = "Delete Task";
+                    deleteTask.Location = new Point(210, 500 + (i * 30));
+                    deleteTask.Size = new Size(100, 20);
+                    form.Controls.Add(deleteTask);
+
+                    deleteTask.Click += (sender, e) =>
+                    {
+                        form.Controls.Clear();
+                        reader.Close();
+                        DeleteTask(form, username, id, "headmechanic");
+
+                    };
+
+                    i++;
+                }
+                reader.Close();
+
+            }
+
+            // show completed jobs
+
+            Label completedJobsLabel = new Label();
+            completedJobsLabel.Text = "Completed Jobs";
+            completedJobsLabel.Location = new Point(10, 600);
+            completedJobsLabel.Size = new Size(100, 20);
+            form.Controls.Add(completedJobsLabel);
+
+            if (DbCon.IsConnect())
+            {
+                // maximum of 10 tasks shown at a time and taskstatus has the value "not started"
+                string query = "SELECT * FROM jobs WHERE jobstatus = 'completed' LIMIT 10";
+                MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                int i = 0;
+                while (reader.Read())
+                {
+                    string id = reader.GetString("id");
+
+                    // show task description 
+                    Label jobDescription = new Label();
+                    jobDescription.Text = reader.GetString("jobdescription");
+                    jobDescription.Location = new Point(10, 620 + (i * 30));
+                    jobDescription.Size = new Size(100, 20);
+                    form.Controls.Add(jobDescription);
+
+                    Button updateJob = new Button();
+                    updateJob.Text = "Update Job";
+                    updateJob.Location = new Point(110, 620 + (i * 30));
+                    updateJob.Size = new Size(100, 20);
+                    form.Controls.Add(updateJob);
+
+                    updateJob.Click += (sender, e) =>
+                    {
+                        form.Controls.Clear();
+                        reader.Close();
+                        UpdateJob(form, username, id, "headmechanic");
+                    };
+
+                    Button deleteJob = new Button();
+                    deleteJob.Text = "Delete Job";
+                    deleteJob.Location = new Point(210, 620 + (i * 30));
+                    deleteJob.Size = new Size(100, 20);
+                    form.Controls.Add(deleteJob);
+
+                    deleteJob.Click += (sender, e) =>
+                    {
+                        form.Controls.Clear();
+                        reader.Close();
+                        DeleteJob(form, username, id, "headmechanic");
+                    };
+
+                    i++;
+                }
+                reader.Close();
+
+            }
+
             // addJob button
             Button addJob = new Button();
             addJob.Text = "Add Job";
-            addJob.Location = new Point(10, 600);
+            addJob.Location = new Point(10, 700);
             addJob.Size = new Size(100, 20);
             form.Controls.Add(addJob);
 
@@ -894,7 +1013,7 @@ namespace Program
 
             Button addTask = new Button();
             addTask.Text = "Add Task";
-            addTask.Location = new Point(10, 630);
+            addTask.Location = new Point(10, 730);
             addTask.Size = new Size(100, 20);
             form.Controls.Add(addTask);
 
@@ -906,7 +1025,7 @@ namespace Program
 
             // logout button
 
-            Logout(form, new int[] { 10, 660 });
+            Logout(form, new int[] { 10, 760 });
 
         }
 
@@ -951,14 +1070,13 @@ namespace Program
             // list all usenames from the staff table
             if (DbCon.IsConnect())
             {
-                string query = "SELECT id, username FROM staff";
+                string query = "SELECT username FROM staff";
                 MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
                 MySqlDataReader reader = cmd.ExecuteReader();
-                string id = reader.GetString(0);
 
                 while (reader.Read())
                 {
-                    staffId.Items.Add(reader.GetString(1));
+                    staffId.Items.Add(reader.GetString("username"));
                 }
                 reader.Close();
             }
@@ -1006,21 +1124,49 @@ namespace Program
             jobNotes.Size = new Size(100, 20);
             form.Controls.Add(jobNotes);
 
+            // jobcost 
+            Label jobCostLabel = new Label();
+            jobCostLabel.Text = "Job Cost";
+            jobCostLabel.Location = new Point(10, 210);
+            jobCostLabel.Size = new Size(100, 20);
+            form.Controls.Add(jobCostLabel);
+
+            TextBox jobCost = new TextBox();
+            jobCost.Location = new Point(10, 230);
+            jobCost.Size = new Size(100, 20);
+            form.Controls.Add(jobCost);
+
+            // signoff bool
+
+            Label signOffLabel = new Label();
+            signOffLabel.Text = "Sign Off";
+            signOffLabel.Location = new Point(10, 260);
+            signOffLabel.Size = new Size(100, 20);
+            form.Controls.Add(signOffLabel);
+
+            ComboBox signOff = new ComboBox();
+            signOff.Items.Add("yes");
+            signOff.Items.Add("no");
+            signOff.Location = new Point(10, 280);
+            signOff.Size = new Size(100, 20);
+            form.Controls.Add(signOff);
+
             // submit button
             Button submit = new Button();
             submit.Text = "Add Job";
-            submit.Location = new Point(10, 210);
+            submit.Location = new Point(10, 300);
             submit.Size = new Size(100, 20);
             form.Controls.Add(submit);
 
             submit.Click += (sender, e) =>
             {
-                // get the customer id from the username
+                // get the customer id from the customer name
                 string customerIdValue = "";
                 if (DbCon.IsConnect())
                 {
-                    string query = "SELECT id FROM customers WHERE name = '" + customerId.Text + "'";
+                    string query = "SELECT id FROM customers WHERE name = @name";
                     MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
+                    cmd.Parameters.AddWithValue("@name", customerId.Text);
                     MySqlDataReader reader = cmd.ExecuteReader();
 
                     while (reader.Read())
@@ -1030,20 +1176,59 @@ namespace Program
                     reader.Close();
                 }
 
+                // get the staff id from the staff username
+                string staffIdValue = "";
+                if (DbCon.IsConnect())
+                {
+                    string query = "SELECT id FROM staff WHERE username = @username";
+                    MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
+                    cmd.Parameters.AddWithValue("@username", staffId.Text);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        staffIdValue = reader.GetString("id");
+                    }
+                    reader.Close();
+                }
+
+                // get the sign off value
+                string signOffValue = "";
+                if (signOff.Text == "yes")
+                {
+                    signOffValue = "1";
+                }
+                else
+                {
+                    signOffValue = "0";
+                }
+
                 // insert the job into the database
                 if (DbCon.IsConnect())
                 {
-                    string query = "INSERT INTO jobs (customer_id, staff_id, jobdescription, jobstatus, jobnotes) VALUES ('" + customerIdValue + "', '" + staffId.Text + "', '" + jobDescription.Text + "', '" + jobStatus.Text + "', '" + jobNotes.Text + "')";
+                    string query = "INSERT INTO jobs (customer_id, staff_id, description, status, notes, cost, signoff) VALUES (@customer_id, @staff_id, @description, @status, @notes, @cost, @signoff)";
                     MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
+                    cmd.Parameters.AddWithValue("@customer_id", customerIdValue);
+                    cmd.Parameters.AddWithValue("@staff_id", staffIdValue);
+                    cmd.Parameters.AddWithValue("@jobdescription", jobDescription.Text);
+                    cmd.Parameters.AddWithValue("@jobstatus", jobStatus.Text);
+                    cmd.Parameters.AddWithValue("@jobnotes", jobNotes.Text);
+                    cmd.Parameters.AddWithValue("@jobcost", jobCost.Text);
+                    cmd.Parameters.AddWithValue("@signoff", signOffValue);
+                    // date
+                    cmd.Parameters.AddWithValue("@jobdate", DateTime.Now.ToString("yyyy-MM-dd"));
                     cmd.ExecuteNonQuery();
                 }
 
+                // clear the form
                 form.Controls.Clear();
+
+                // display the jobs page
                 UserPage(form, username, role);
             };
 
             // back button
-            Back(form, new int[] { 10, 240 }, username, role);
+            Back(form, new int[] { 10, 340 }, username, role);
 
         }
 
@@ -1127,7 +1312,7 @@ namespace Program
                 // insert the task into the database
                 if (DbCon.IsConnect())
                 {
-                    string query = "INSERT INTO tasks (jobid, taskdescription, taskstatus, tasknotes) VALUES ('" + jobId.Text + "', '" + taskDescription.Text + "', '" + taskStatus.Text + "', '" + taskNotes.Text + "')";
+                    string query = "INSERT INTO tasks (job_id, taskdescription, taskstatus, tasknotes, taskdate) VALUES ('" + jobId.Text + "', '" + taskDescription.Text + "', '" + taskStatus.Text + "', '" + taskNotes.Text + "', '" + DateTime.Now.ToString("yyyy-MM-dd") + "')";
                     MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
                     cmd.ExecuteNonQuery();
                 }
@@ -1393,7 +1578,7 @@ namespace Program
             {
                 if (DbCon.IsConnect())
                 {
-                    string query = "UPDATE tasks SET jobid = '" + jobId.Text + "', taskdescription = '" + taskDescription.Text + "', taskstatus = '" + taskStatus.Text + "', tasknotes = '" + taskNotes.Text + "' WHERE id = '" + id + "'";
+                    string query = "UPDATE tasks SET job_id = '" + jobId.Text + "', taskdescription = '" + taskDescription.Text + "', taskstatus = '" + taskStatus.Text + "', tasknotes = '" + taskNotes.Text + "', taskdate = '" + DateTime.Now.ToString("yyyy-MM-dd") + "' WHERE id = '" + id + "'";
 
                     MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
                     cmd.ExecuteNonQuery();
@@ -1583,6 +1768,21 @@ namespace Program
                         DeleteJob(form, username, id, "offadmin");
                     };
 
+                    // button invoice
+
+                    Button invoice = new Button();
+                    invoice.Text = "Invoice";
+                    invoice.Location = new Point(310, 30 + (i * 30));
+                    invoice.Size = new Size(100, 20);
+                    form.Controls.Add(invoice);
+
+                    invoice.Click += (sender, e) =>
+                    {
+                        form.Controls.Clear();
+                        reader.Close();
+                        Invoice(form, username, id, "offadmin");
+                    };
+
                     i++;
                 }
                 reader.Close();
@@ -1647,7 +1847,7 @@ namespace Program
 
             Label customersLabel = new Label();
             customersLabel.Text = "Customers";
-            customersLabel.Location = new Point(10, 620);
+            customersLabel.Location = new Point(10, 520);
             customersLabel.Size = new Size(100, 20);
             form.Controls.Add(customersLabel);
 
@@ -1664,13 +1864,13 @@ namespace Program
 
                     Label customerLabel = new Label();
                     customerLabel.Text = reader.GetString(1);
-                    customerLabel.Location = new Point(10, 650 + i);
+                    customerLabel.Location = new Point(10, 550 + i);
                     customerLabel.Size = new Size(100, 20);
                     form.Controls.Add(customerLabel);
 
                     Button UpdateButton = new Button();
                     UpdateButton.Text = "Update";
-                    UpdateButton.Location = new Point(110, 650 + i);
+                    UpdateButton.Location = new Point(110, 550 + i);
                     UpdateButton.Size = new Size(100, 20);
                     form.Controls.Add(UpdateButton);
 
@@ -1684,7 +1884,7 @@ namespace Program
 
                     Button DeleteButton = new Button();
                     DeleteButton.Text = "Delete";
-                    DeleteButton.Location = new Point(210, 650 + i);
+                    DeleteButton.Location = new Point(210, 550 + i);
                     DeleteButton.Size = new Size(100, 20);
                     form.Controls.Add(DeleteButton);
 
@@ -1705,7 +1905,7 @@ namespace Program
             // addJob button
             Button addJob = new Button();
             addJob.Text = "Add Job";
-            addJob.Location = new Point(10, 720);
+            addJob.Location = new Point(10, 620);
             addJob.Size = new Size(100, 20);
             form.Controls.Add(addJob);
 
@@ -1719,7 +1919,7 @@ namespace Program
 
             Button addTask = new Button();
             addTask.Text = "Add Task";
-            addTask.Location = new Point(10, 740);
+            addTask.Location = new Point(10, 640);
             addTask.Size = new Size(100, 20);
             form.Controls.Add(addTask);
 
@@ -1729,7 +1929,258 @@ namespace Program
                 AddTask(form, username, "offadmin");
             };
 
+            // show job description and job cost next to each other 
+
+
+
             Logout(form, new int[] { 10, 770 });
+        }
+
+        public static void Invoice(Form form, string username, string id, string role)
+        {
+            Label invoiceLabel = new Label();
+            invoiceLabel.Text = "Invoice";
+            invoiceLabel.Location = new Point(10, 10);
+            invoiceLabel.Size = new Size(100, 20);
+            form.Controls.Add(invoiceLabel);
+
+            DBConnection DbCon = DBConfig();
+            if (DbCon.IsConnect()){
+                string query = "SELECT * FROM invoices WHERE id = " + id;
+                MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
+                MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+
+                    
+                    // from job id get job description and job cost
+                    string jobID = reader.GetString("job_id");
+                    string customerID = reader.GetString("customer_id");
+                    string amountPaid = reader.GetString("amount_paid");
+                    string amountOwed = reader.GetString("amount_owed");
+                    string paymentSchedule = reader.GetString("payment_schedule");
+
+                    // string query2 = "SELECT * FROM jobs WHERE id = " + jobID;
+                    // MySqlCommand cmd2 = new MySqlCommand(query2, DbCon.Connection);
+                    // MySqlDataReader reader2 = cmd2.ExecuteReader();
+
+                    // while (reader2.Read())
+                    // {
+                    //     string jobDescription = reader2.GetString("jobdescription");
+                    //     string jobCost = reader2.GetString("jobcost");
+
+                    //     Label jobDescriptionLabel = new Label();
+                    //     jobDescriptionLabel.Text = jobDescription;
+                    //     jobDescriptionLabel.Location = new Point(10, 30);
+                    //     jobDescriptionLabel.Size = new Size(100, 20);
+                    //     form.Controls.Add(jobDescriptionLabel);
+
+                    //     Label jobCostLabel = new Label();
+                    //     jobCostLabel.Text = jobCost;
+                    //     jobCostLabel.Location = new Point(110, 30);
+                    //     jobCostLabel.Size = new Size(100, 20);
+                    //     form.Controls.Add(jobCostLabel);
+                    // }
+                    // reader2.Close();
+
+                    // Cannot run two queries at the same time while another is running 
+
+                    // attempt: close main reader and open new reader for each job id and customer id, problem is if there are more than one invoice it will only show the first invoice
+                    
+                    Label customerNameLabel = new Label();
+                    customerNameLabel.Text = customerID;
+                    customerNameLabel.Location = new Point(10, 50);
+                    customerNameLabel.Size = new Size(100, 20);
+                    form.Controls.Add(customerNameLabel);
+                    // get amount paid 
+                    
+
+                    Label amountPaidLabel = new Label();
+                    amountPaidLabel.Text = amountPaid;
+                    amountPaidLabel.Location = new Point(10, 70);
+                    amountPaidLabel.Size = new Size(100, 20);
+                    form.Controls.Add(amountPaidLabel);
+                    // update amount paid
+
+                    Button updateAmountPaid = new Button();
+                    updateAmountPaid.Text = "Update Amount Paid";
+                    updateAmountPaid.Location = new Point(110, 70);
+                    updateAmountPaid.Size = new Size(100, 20);
+                    form.Controls.Add(updateAmountPaid);
+
+                    updateAmountPaid.Click += (sender, e) =>
+                    {
+                        form.Controls.Clear();
+                        reader.Close();
+                        UpdateAmountPaid(form, username, id, role);
+                    };
+
+                    // get amount due
+                    
+
+                    Label amountOwedLabel = new Label();
+                    amountOwedLabel.Text = amountOwed;
+                    amountOwedLabel.Location = new Point(10, 90);
+                    amountOwedLabel.Size = new Size(100, 20);
+                    form.Controls.Add(amountOwedLabel);
+
+                    // update amount due
+                    Button updateAmountDue = new Button();
+                    updateAmountDue.Text = "Update Amount Due";
+                    updateAmountDue.Location = new Point(110, 90);
+                    updateAmountDue.Size = new Size(100, 20);
+                    form.Controls.Add(updateAmountDue);
+
+                    updateAmountDue.Click += (sender, e) =>
+                    {
+                        form.Controls.Clear();
+                        reader.Close();
+                        UpdateAmountDue(form, username, id, role);
+                    };
+
+                    // get payment schedule
+                    
+
+                    Label paymentScheduleLabel = new Label();
+                    paymentScheduleLabel.Text = paymentSchedule;
+                    paymentScheduleLabel.Location = new Point(10, 110);
+                    paymentScheduleLabel.Size = new Size(100, 20);
+                    form.Controls.Add(paymentScheduleLabel);
+
+                    // update payment schedule
+                    Button updatePaymentSchedule = new Button();
+                    updatePaymentSchedule.Text = "Update Payment Schedule";
+                    updatePaymentSchedule.Location = new Point(110, 110);
+                    updatePaymentSchedule.Size = new Size(100, 20);
+                    form.Controls.Add(updatePaymentSchedule);
+
+                    updatePaymentSchedule.Click += (sender, e) =>
+                    {
+                        form.Controls.Clear();
+                        reader.Close();
+                        UpdatePaymentSchedule(form, username, id, role);
+                    };
+
+                    
+                }
+                reader.Close();
+            }
+
+            Back(form, new int[] { 10, 770 }, username, role);
+
+            
+        }
+
+        public static void UpdateAmountPaid(Form form, string username, string id, string role)
+        {
+            Label updateAmountPaidLabel = new Label();
+            updateAmountPaidLabel.Text = "Update Amount Paid";
+            updateAmountPaidLabel.Location = new Point(10, 10);
+            updateAmountPaidLabel.Size = new Size(100, 20);
+            form.Controls.Add(updateAmountPaidLabel);
+
+            TextBox updateAmountPaidTextBox = new TextBox();
+            updateAmountPaidTextBox.Location = new Point(10, 30);
+            updateAmountPaidTextBox.Size = new Size(100, 20);
+            form.Controls.Add(updateAmountPaidTextBox);
+
+            Button updateAmountPaidButton = new Button();
+            updateAmountPaidButton.Text = "Update Amount Paid";
+            updateAmountPaidButton.Location = new Point(10, 50);
+            updateAmountPaidButton.Size = new Size(100, 20);
+            form.Controls.Add(updateAmountPaidButton);
+
+            updateAmountPaidButton.Click += (sender, e) =>
+            {
+                DBConnection DbCon = DBConfig();
+                if (DbCon.IsConnect())
+                {
+                    string query = "UPDATE invoices SET amountpaid = " + updateAmountPaidTextBox.Text + " WHERE id = " + id;
+                    MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
+                    cmd.ExecuteNonQuery();
+                    DbCon.Close();
+                }
+                form.Controls.Clear();
+                Invoice(form, username, id, role);
+            };
+
+            Logout(form, new int[] { 10, 770 });
+            Back(form, new int[] { 10, 800 }, username, role);
+        }
+
+        public static void UpdateAmountDue(Form form, string username, string id, string role)
+        {
+            Label updateAmountDueLabel = new Label();
+            updateAmountDueLabel.Text = "Update Amount Due";
+            updateAmountDueLabel.Location = new Point(10, 10);
+            updateAmountDueLabel.Size = new Size(100, 20);
+            form.Controls.Add(updateAmountDueLabel);
+
+            TextBox updateAmountDueTextBox = new TextBox();
+            updateAmountDueTextBox.Location = new Point(10, 30);
+            updateAmountDueTextBox.Size = new Size(100, 20);
+            form.Controls.Add(updateAmountDueTextBox);
+
+            Button updateAmountDueButton = new Button();
+            updateAmountDueButton.Text = "Update Amount Due";
+            updateAmountDueButton.Location = new Point(10, 50);
+            updateAmountDueButton.Size = new Size(100, 20);
+            form.Controls.Add(updateAmountDueButton);
+
+            updateAmountDueButton.Click += (sender, e) =>
+            {
+                DBConnection DbCon = DBConfig();
+                if (DbCon.IsConnect())
+                {
+                    string query = "UPDATE invoices SET amountdue = " + updateAmountDueTextBox.Text + " WHERE id = " + id;
+                    MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
+                    cmd.ExecuteNonQuery();
+                    DbCon.Close();
+                }
+                form.Controls.Clear();
+                Invoice(form, username, id, role);
+            };
+
+            Logout(form, new int[] { 10, 770 });
+            Back(form, new int[] { 10, 800 }, username, role);
+        }
+
+        public static void UpdatePaymentSchedule(Form form, string username, string id, string role)
+        {
+            Label updatePaymentScheduleLabel = new Label();
+            updatePaymentScheduleLabel.Text = "Update Payment Schedule";
+            updatePaymentScheduleLabel.Location = new Point(10, 10);
+            updatePaymentScheduleLabel.Size = new Size(100, 20);
+            form.Controls.Add(updatePaymentScheduleLabel);
+
+            TextBox updatePaymentScheduleTextBox = new TextBox();
+            updatePaymentScheduleTextBox.Location = new Point(10, 30);
+            updatePaymentScheduleTextBox.Size = new Size(100, 20);
+            form.Controls.Add(updatePaymentScheduleTextBox);
+
+            Button updatePaymentScheduleButton = new Button();
+            updatePaymentScheduleButton.Text = "Update Payment Schedule";
+            updatePaymentScheduleButton.Location = new Point(10, 50);
+            updatePaymentScheduleButton.Size = new Size(100, 20);
+            form.Controls.Add(updatePaymentScheduleButton);
+
+            updatePaymentScheduleButton.Click += (sender, e) =>
+            {
+                DBConnection DbCon = DBConfig();
+                if (DbCon.IsConnect())
+                {
+                    string query = "UPDATE invoices SET paymentschedule = " + updatePaymentScheduleTextBox.Text + " WHERE id = " + id;
+                    MySqlCommand cmd = new MySqlCommand(query, DbCon.Connection);
+                    cmd.ExecuteNonQuery();
+                    DbCon.Close();
+                }
+                form.Controls.Clear();
+                Invoice(form, username, id, role);
+            };
+
+            Logout(form, new int[] { 10, 770 });
+            Back(form, new int[] { 10, 800 }, username, role);
         }
 
         // create a database connection
@@ -1758,7 +2209,8 @@ namespace Program
 
                     for (int i = 0; i < 10; i++)
                     {
-                        string query = "INSERT INTO tasks (job_id, taskdescription, taskstatus, tasknotes, taskdate) VALUES ('" + 1 + "', '" + "task description" + "', '" + "task status" + "', '" + "tasknotes" + "', '" + "taskdate" + "')";
+                        // create a invoices table
+                        string query = "CREATE TABLE IF NOT EXISTS `invoices` (`id` int(11) NOT NULL AUTO_INCREMENT, `job_id` int(11) NOT NULL, `customer_id` int(11) NOT NULL, amount_owed int(11) NOT NULL, amount_paid int(11) NOT NULL, payment_schedule varchar(255) NOT NULL, FOREIGN KEY (job_id) REFERENCES jobs(id), FOREIGN KEY (customer_id) REFERENCES customers(id), PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
                         MySqlCommand cmd = new MySqlCommand(query, dbCon.Connection);
                         cmd.ExecuteNonQuery();
                     }
@@ -1821,5 +2273,4 @@ namespace Program
 // update columns names to a more readable format (camel case) 
 // have it so that job and task your updating in realtime 
 
-// show completed/closed in headmachanic page
 // create new table for invoices and payments owed associated with customer
